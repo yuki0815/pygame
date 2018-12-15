@@ -13,7 +13,7 @@ pygame.key.set_repeat(5,5)  #キーの押下と押しっぱなしの取得(追�
 position = [400, 300] #座標を配列に[x座標, y座標](追加したとこ)
 
 #mainループ
-def main():
+def main
     while True:
         screen.fill((255,0,255))  #ウィンドウの背景色
 
@@ -33,14 +33,10 @@ def main():
                     position[1] -= 5
                 elif event.key == K_DOWN:
                     position[1] += 5
-                    
-            if position[0] > 800 or position[0] < 0: # はみ出たら移動方向を反転
-                position[0] *= -1
-            if position[1] > 600 or position[1] < 0: # 同上
-                position[1] *= -1
+
         #画面の端に行ったら反対から出るようにする(追加したとこ)
-        #position[0] = position[0] % 800
-        #position[1] = position[1] % 600
+        position[0] = position[0] % 800
+        position[1] = position[1] % 600
 
         #画像の描画位置(追加したとこ)
         rect = image.get_rect()
