@@ -10,7 +10,7 @@ SCR_RECT = Rect(0, 0, 800, 600)
 def main():
     pygame.init()
     screen = pygame.display.set_mode(SCR_RECT.size)
-    pygame.display.set_caption(u"Invader 02 ミサイルの発射")
+    pygame.display.set_caption(u"Gofer_Atack")
     # サウンドのロード
     Player.shot_sound = load_sound("shot.wav")
     # スプライトグループを作成して登録
