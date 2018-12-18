@@ -5,7 +5,7 @@ from pygame.locals import *
 import os
 import sys
 
-SCR_RECT = Rect(0, 0, 1200, 1000)
+SCR_RECT = Rect(0, 0, 1000, 700)
 
 def main():
     pygame.init()
@@ -17,16 +17,17 @@ def main():
     all = pygame.sprite.RenderUpdates()
     Player.containers = all
     Shot.containers = all
+    Alien.containers = all
     # スプライトの画像を登録
     Player.image = load_image("goAK.png")
     Shot.image = load_image("shot.png")
     # 自機を作成
     Alien.images = split_image(load_image("alien.png"), 2)
-    Player()　#プレイヤー作成
+    Player()
 
-    for i in range(0, 50):
-        x = 20 + (i % 10) * 40
-        y = 20 + (i / 10) * 40
+    for i in range(0, 30):
+        x = 600 + (i % 10) * 40
+        y = 10 + (i / 10) * 40
         Alien((x,y))
 
     
@@ -78,26 +79,26 @@ class Player(pygame.sprite.Sprite):
 
 class Alien(pygame.sprite.Sprite):
     """エイリアン"""
-    speed = 2  # 移動速度
+    speed = 8  # 移動速度
     animcycle = 18  # アニメーション速度
     frame = 0
-    move_width = 230  # 横方向の移動範囲
+    move_width = 700  # 横方向の移動範囲
     def __init__(self, pos):
         # imagesとcontainersはmain()でセット
         pygame.sprite.Sprite.__init__(self, self.containers)
         self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.center = pos
-        self.top = pos[0]  # 移動できる左端
-        self.bottom = self.left + self.move_width  # 移動できる右端
+        self.top = 0  # 移動できる左端
+        self.bottom = self.top + self.move_width  # 移動できる右端
     def update(self):
         # 横方向への移動
-        self.rect.move_ip(self.speed, 0)
-        if self.rect.center[0] < self.left or self.rect.center[0] > self.right:
+        self.rect.move_ip(0,self.speed )
+        if self.rect.top < self.top or self.rect.bottom > self.bottom:
             self.speed = -self.speed
         # キャラクターアニメーション
         self.frame += 1
-        self.image = self.images[self.frame/self.animcycle%2]
+        self.image = self.images[int(self.frame/self.animcycle%2)]
 
 class Shot(pygame.sprite.Sprite):
     """プレイヤーが発射するミサイル"""
@@ -126,6 +127,21 @@ def load_image(filename, colorkey=None):
             colorkey = image.get_at((0,0))
         image.set_colorkey(colorkey, RLEACCEL)
     return image
+
+def split_image(image, n):
+    """横に長いイメージを同じ大きさのn枚のイメージに分割
+    分割したイメージを格納したリストを返す"""
+    image_list = []
+    w = image.get_width()
+    h = image.get_height()
+    w1 = int(w / n)
+    for i in range(0, w, w1):
+        surface = pygame.Surface((w1,h))
+        surface.blit(image, (0,0), (i,0,w1,h))
+        surface.set_colorkey(surface.get_at((0,0)), RLEACCEL)
+        surface.convert()
+        image_list.append(surface)
+    return image_list
 
 def load_sound(filename):
     filename = os.path.join("./", filename)
