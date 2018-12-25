@@ -310,4 +310,4 @@ def load_sound(filename):
     return pygame.mixer.Sound(filename)
 
 if __name__ == "__main__":
-    GO = Gopher()
+    Gopher()
