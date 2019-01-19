@@ -7,7 +7,7 @@ import random
 import sys
 
 
-START, PLAY, GAMEOVER = (0, 1, 2)
+START, PLAY, GAMEOVER, CLEAR = (0, 1, 2, 3)
 SCR_RECT = Rect(0, 0, 1000, 700)
 
 class Gopher:
@@ -53,6 +53,10 @@ class Gopher:
             y = 30 + (i / 10) * 40
             Alien((x,y))
 
+            x = 600 + (i % 10) * 40
+            y = 600 - (i / 10) * 40
+            Alien((x,y))
+
     def update(self):
         """ゲーム状態の更新"""
         if Gopher.game_state == PLAY:
@@ -61,7 +65,7 @@ class Gopher:
             self.collision_detection()
             # エイリアンをすべて倒したらゲームオーバー
             if len(self.aliens.sprites()) == 0:
-                Gopher.game_state = GAMEOVER
+                Gopher.game_state = CLEAR
 
     def draw(self, screen):
         """描画"""
@@ -101,6 +105,23 @@ class Gopher:
             made_space = made_font.render("This game is created in python !!", False, (255,255,255))
             screen.blit(made_space, ((SCR_RECT.width-made_space.get_width())/2, 500))
 
+        elif Gopher.game_state == CLEAR :  # ゲームオーバー画面
+            # GAME OVERを描画
+            clear_font = pygame.font.SysFont(None, 80)
+            clear = clear_font.render("Python is DIED....!!Thk for Playng!!", False, (255,0,0))
+            screen.blit(clear, ((SCR_RECT.width-clear.get_width())/2, 100))
+            # エイリアンを描画
+            alien_image = Player.image
+            screen.blit(alien_image, ((SCR_RECT.width-alien_image.get_width())/2, 200))
+            # PUSH STARTを描画
+            push_font = pygame.font.SysFont(None, 40)
+            push_space = push_font.render("PUSH SPACE KEY", False, (255,255,255))
+            screen.blit(push_space, ((SCR_RECT.width-push_space.get_width())/2, 400))
+
+            made_font = pygame.font.SysFont(None, 30)
+            made_space = made_font.render("This game is created in python !!", False, (255,255,255))
+            screen.blit(made_space, ((SCR_RECT.width-made_space.get_width())/2, 500))
+
     def key_handler(self):
         """キーハンドラー"""
         for event in pygame.event.get():
@@ -113,10 +134,10 @@ class Gopher:
             elif event.type == KEYDOWN and event.key == K_SPACE:
                 if Gopher.game_state == START:  # スタート画面でスペースを押したとき
                     Gopher.game_state = PLAY
-                elif Gopher.game_state == GAMEOVER:  # ゲームオーバー画面でスペースを押したとき
+                elif Gopher.game_state == GAMEOVER or Gopher.game_state == CLEAR :  # ゲームオーバー画面でスペースを押したとき
                     self.init_game()
-                    # ゲームを初期化して再開
                     Gopher.game_state = START
+
 
     def collision_detection(self):
         """衝突判定"""
@@ -257,7 +278,7 @@ class Explosion(pygame.sprite.Sprite):
 
 class PlayerExplosion(pygame.sprite.Sprite):
     """爆発エフェクト"""
-    animcycle = 10 # アニメーション速度
+    animcycle = 5 # アニメーション速度
     frame = 0
     def __init__(self, pos):
         # imagesとcontainersはmain()でセット
