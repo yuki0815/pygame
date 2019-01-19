@@ -116,7 +116,7 @@ class Gopher:
                 elif Gopher.game_state == GAMEOVER:  # ゲームオーバー画面でスペースを押したとき
                     self.init_game()
                     # ゲームを初期化して再開
-                    Gopher.game_state = PLAY
+                    Gopher.game_state = START
 
     def collision_detection(self):
         """衝突判定"""
