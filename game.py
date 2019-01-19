@@ -277,7 +277,7 @@ class PlayerExplosion(pygame.sprite.Sprite):
 
 def load_image(filename, colorkey=None):
     """画像をロードして画像と矩形を返す"""
-    filename = os.path.join("./", filename)
+    filename = os.path.join("./data/", filename)
     try:
         image = pygame.image.load(filename)
     except pygame.error as message:
@@ -306,7 +306,7 @@ def split_image(image, n):
     return image_list
 
 def load_sound(filename):
-    filename = os.path.join("./", filename)
+    filename = os.path.join("./data/", filename)
     return pygame.mixer.Sound(filename)
 
 if __name__ == "__main__":
