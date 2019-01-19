@@ -50,7 +50,7 @@ class Gopher:
         #敵キャラの作成
         for i in range(0, 50):
             x = 600 + (i % 10) * 40
-            y = 10 + (i / 10) * 40
+            y = 30 + (i / 10) * 40
             Alien((x,y))
 
     def update(self):
@@ -136,7 +136,7 @@ class Gopher:
         Player.image = PlayerExplosion.image = load_image("goAK.png")
         Shot.image = load_image("shot.png")
         Beam.image = load_image("beam.png")
-        Alien.images = split_image(load_image("alien.png"), 2)
+        Alien.images = split_image(load_image("python.png"), 2)
         Explosion.images = split_image(load_image("explosion.png"), 16)
         PlayerExplosion.images = split_image(load_image("go_Ex.png"), 16)
 
