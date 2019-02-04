@@ -5,13 +5,16 @@ from pygame.locals import *
 import os
 import random
 import sys
+from time import sleep
 
 
 START, PLAY, GAMEOVER, CLEAR = (0, 1, 2, 3)
 SCR_RECT = Rect(0, 0, 1000, 700)
+ON,OFF = (0 , 1)
 
 class Gopher:
     game_state = START
+    KEY_OSUYO = 0 
     def __init__(self):
         pygame.init()
         screen = pygame.display.set_mode(SCR_RECT.size)
@@ -88,7 +91,7 @@ class Gopher:
             screen.blit(credit, ((SCR_RECT.width-credit.get_width())/2, 500))
         elif Gopher.game_state == PLAY:  # ゲームプレイ画面
             self.all.draw(screen)
-        elif Gopher.game_state == GAMEOVER:  # ゲームオーバー画面
+        elif Gopher.game_state == GAMEOVER :  # ゲームオーバー画面
             # GAME OVERを描画
             gameover_font = pygame.font.SysFont(None, 80)
             gameover = gameover_font.render("Gopher is DIED....", False, (255,0,0))
@@ -136,6 +139,7 @@ class Gopher:
                     Gopher.game_state = PLAY
                 elif Gopher.game_state == GAMEOVER or Gopher.game_state == CLEAR :  # ゲームオーバー画面でスペースを押したとき
                     self.init_game()
+                    Gopher.KEY_OSUYO = ON
                     Gopher.game_state = START
 
 
@@ -151,6 +155,10 @@ class Gopher:
         if beam_collided:
             Player.bomb_sound.play()
             PlayerExplosion(self.player.rect.center)
+
+        shot_collided = pygame.sprite.groupcollide(self.beams, self.shots, True, False)
+        if shot_collided:
+            Alien.kill_sound.play()
 
     def load_images(self):
         # スプライトの画像を登録
@@ -176,7 +184,7 @@ class Gopher:
 class Player(pygame.sprite.Sprite):
     """自機"""
     speed = 10  # 移動速度
-    reload_time = 5  # リロード時間
+    reload_time = 15  # リロード時間
     def __init__(self):
         # imageとcontainersはmain()でセット
         pygame.sprite.Sprite.__init__(self, self.containers)
@@ -187,7 +195,9 @@ class Player(pygame.sprite.Sprite):
         # 押されているキーをチェック
         pressed_keys = pygame.key.get_pressed()
         # 押されているキーに応じてプレイヤーを移動
-        if pressed_keys[K_UP]:
+        if Gopher.KEY_OSUYO == OFF :
+            pass
+        elif pressed_keys[K_UP]:
             self.rect.move_ip(0, -self.speed)
         elif pressed_keys[K_DOWN]:
             self.rect.move_ip(0, self.speed)
@@ -232,7 +242,7 @@ class Alien(pygame.sprite.Sprite):
         self.image = self.images[int(self.frame/self.animcycle%2)]
 
 class Shot(pygame.sprite.Sprite):
-    """プレイヤーが発射するミサイル"""
+    """プレイヤーが発射するビーム"""
     speed = 10  # 移動速度
     def __init__(self, pos):
         # imageとcontainersはmain()でセット
@@ -289,12 +299,14 @@ class PlayerExplosion(pygame.sprite.Sprite):
         self.max_frame = len(self.images) * self.animcycle  # 消滅するフレーム
         #print(self.max_frame)
     def update(self):
+        Gopher.KEY_OSUYO = OFF
         # キャラクターアニメーション
         self.image = self.images[int(self.frame/self.animcycle)]
         self.frame += 1
         if self.frame == self.max_frame:
             self.kill()
-            Gopher.set_state()#= GAMEOVER
+            Gopher.set_state()
+            #= GAMEOVER
 
 def load_image(filename, colorkey=None):
     """画像をロードして画像と矩形を返す"""
